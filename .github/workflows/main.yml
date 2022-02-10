@@ -17,6 +17,13 @@ jobs:
 
     - name: 배포 패키지를 zip으로 압축하기
       run: zip -r deploy.zip . -x '*.git*'
+      
+    - name: Get current time
+      uses: 1466587594/get-current-time@v2
+      id: current-time
+      with:
+        format: YYYY-MM-DDTHH-mm-ss
+        utcOffset: "+09:00"
 
     - name: EB에 배포하기
       uses: einaregilsson/beanstalk-deploy@v20
@@ -25,5 +32,6 @@ jobs:
         aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         application_name: express-project
         environment_name: express-project-env
+        version_label: github-action-${{steps.current-time.outputs.formattedTime}}
         region: ap-northeast-2
         deployment_package: deploy.zip
